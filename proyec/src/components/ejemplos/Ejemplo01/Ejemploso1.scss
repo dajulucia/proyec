@@ -1,0 +1,26 @@
+.container-celda{
+    background-color: rgba($color: #cc1665, $alpha: 1.0);
+    width: 50%;
+    align-items: center;
+    text-align: center;
+    padding-top: 10px;
+    border-radius: 40px;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+}
+h1{
+    color: white;
+    font-size: 70px;
+    &_button{
+        display: flex;
+        justify-content: space-between
+          button{
+            padding: 40px 40px 40px 40px;
+           
+            color: dar;
+        }
+
+}
+
+}
