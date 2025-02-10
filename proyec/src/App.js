@@ -1,12 +1,10 @@
-
-import { homeP } from "./components/ejemplos/productos";
-
+import{BrowserRouter} from "react-router-dom"
+import {Rutas} from "./routes";
 function App() {
   return (
-    <div>
-      < homeP  />
-     
-    </div>
+     <BrowserRouter>
+      <Rutas/>
+    </BrowserRouter>
   );
 }
 
