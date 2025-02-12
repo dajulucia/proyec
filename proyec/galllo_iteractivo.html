@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adivina el Personaje</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 20px;
+    }
+    .game-container {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      display: inline-block;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    #clues {
+      margin: 20px 0;
+    }
+    input[type="text"] {
+      padding: 8px;
+      width: 220px;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin: 5px;
+      cursor: pointer;
+    }
+    #message {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="game-container">
+    <h1>Adivina el Personaje</h1>
+    <p>Lee las pistas y escribe el nombre del personaje.</p>
+    <div id="clues"></div>
+    <input type="text" id="guessInput" placeholder="Escribe tu respuesta">
+    <br>
+    <button id="guessBtn">Adivinar</button>
+    <button id="startBtn">Iniciar Juego</button>
+    <div id="message"></div>
+  </div>
+  
+  <script>
+    // Lista de personajes con sus pistas
+    const characters = [
+      {
+        name: "harry potter",
+        clues: ["Tiene una cicatriz en forma de rayo", "Es un mago", "Estudia en Hogwarts"]
+      },
+      {
+        name: "sherlock holmes",
+        clues: ["Es un detective", "Reside en Londres", "Famoso por su astucia"]
+      },
+      {
+        name: "batman",
+        clues: ["Conocido como el Caballero Oscuro", "Protege Gotham", "No tiene superpoderes"]
+      },
+      {
+        name: "superman",
+        clues: ["Viene del planeta krypton", "Posee superpoderes", "Su emblema es una S"]
+      },
+      {
+        name: "mario",
+        clues: ["Es un fontanero", "Salta", "Rescata a la Princesa Peach"]
+      },
+      {
+        name: "darth vader",
+        clues: ["Es un villano icónico", "Usa la Fuerza", "Tiene una respiración mecánica"]
+      }
+    ];
+
+    let currentCharacter = null;
+
+    // Función para iniciar el juego: elige un personaje al azar y muestra sus pistas
+    function startGame() {
+      document.getElementById("message").textContent = "";
+      document.getElementById("guessInput").value = "";
+      // Seleccionar un personaje aleatorio
+      currentCharacter = characters[Math.floor(Math.random() * characters.length)];
+      // Mostrar las pistas en formato de lista
+      const cluesDiv = document.getElementById("clues");
+      cluesDiv.innerHTML = "<ul>" + currentCharacter.clues.map(clue => "<li>" + clue + "</li>").join('') + "</ul>";
+    }
+
+    // Función para comprobar la respuesta del usuario
+    function checkGuess() {
+      const guess = document.getElementById("guessInput").value.trim().toLowerCase();
+      const messageDiv = document.getElementById("message");
+      if (!currentCharacter) {
+        messageDiv.textContent = "Por favor, inicia el juego primero.";
+        return;
+      }
+      if (guess === currentCharacter.name) {
+        messageDiv.textContent = "¡Correcto! El personaje es " + currentCharacter.name.toUpperCase() + ".";
+      } else {
+        messageDiv.textContent = "Incorrecto, intenta de nuevo.";
+      }
+    }
+
+    // Permitir enviar la respuesta con la tecla Enter
+    document.getElementById("guessInput").addEventListener("keydown", function(e) {
+      if (e.key === "Enter") {
+        checkGuess();
+      }
+    });
+
+    // Asignar eventos a los botones
+    document.getElementById("startBtn").addEventListener("click", startGame);
+    document.getElementById("guessBtn").addEventListener("click", checkGuess);
+  </script>
+</body>
+</html>
