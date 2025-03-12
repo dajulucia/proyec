@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Newton-Raphson</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid black; padding: 8px; text-align: center; }
+        #grafica { width: 50%; height: 400px; margin: 0 auto; display: block; }
+    </style>
+</head>
+<body>
+    <h2>Newton-Raphson</h2>
+    <canvas id="grafica"></canvas>
+    <table id="tablaResultados"><thead><tr><th>Iter</th><th>x</th><th>f(x)</th><th>f'(x)</th><th>Error%</th></tr></thead><tbody></tbody></table>
+    <script>
+        const f = x => -1 + 5.5 * x ** -16 + 0.5 * x ** 3, df = x => -22 * x ** -17 + 1.5 * x ** 2;
+        let x0 = 1, tabla = [], puntos = [];
+        for (let i = 0; i < 10; i++) {
+            let fx = f(x0), dfx = df(x0), x1 = x0 - fx / dfx, error = Math.abs((x1 - x0) / x1) * 100;
+            if (!dfx) break;
+            tabla.push([i, x0, fx, dfx, error]), puntos.push({x: x0, y: fx});
+            if (error < 0.0001) break;
+            x0 = x1;
+        }
+        document.querySelector("#tablaResultados tbody").innerHTML = tabla.map(([i, x, fx, dfx, error]) => `<tr><td>${i}</td><td>${x.toFixed(4)}</td><td>${fx.toFixed(4)}</td><td>${dfx.toFixed(4)}</td><td>${error.toFixed(2)}%</td></tr>`).join('');
+        new Chart(document.getElementById('grafica').getContext('2d'), {
+            type: 'line', data: { labels: [...Array(41)].map((_, i) => i / 10 - 2), datasets: [{ label: 'f(x)', data: [...Array(41)].map((_, i) => f(i / 10 - 2)), borderColor: 'blue' }, { label: 'Raíces', data: puntos, borderColor: 'red', pointBackgroundColor: 'red', showLine: false }] },
+            options: { scales: { x: { type: 'linear', position: 'bottom' }, y: { min: -5, max: 5 } } }
+        });
+    </script>
+</body>
+</html>

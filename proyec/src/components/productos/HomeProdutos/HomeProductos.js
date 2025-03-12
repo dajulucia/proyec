@@ -6,7 +6,7 @@ import { ItemProductos } from '../ItemProductos';
 import "./HomeProducto.scss"
 
 export function HomeProductos() {
-console.log(Datos);
+//console.log(Datos);
 
   const fondo={
     tema:{

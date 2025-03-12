@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Método de Bisección con Gráfica y Tabla</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Estilo para la tabla */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+
+        /* Estilo para la gráfica */
+        #grafica {
+            width: 50%;  /* 50% del ancho de la pantalla */
+            height: 400px; /* Puedes ajustar la altura como desees */
+            margin: 0 auto; /* Centra la gráfica horizontalmente */
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <h2>Método de Bisección con Gráfica y Tabla</h2>
+
+    <canvas id="grafica"></canvas>  <!-- El tamaño se define por CSS -->
+    
+    <h3>Tabla de Iteraciones</h3>
+    <table id="tablaResultados">
+        <thead>
+            <tr>
+                <th>Iteración</th>
+                <th>xi</th>
+                <th>xs</th>
+                <th>xa</th>
+                <th>ea%</th>
+                <th>et%</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        // Definir la función f(x)
+        function f(x) {
+            return -0.5 * x ** 2 + 2.5 * x + 4.5;
+        }
+
+        // Método de bisección con un máximo de 10 iteraciones
+        function biseccion(xi, xs, tol = 0.0001, raizReal = 5, maxIter = 10) {
+            let i = 0;
+            let xaPrev = null;
+            let tabla = [];
+            let puntos = [];
+
+            while (i < maxIter) {
+                let xa = (xi + xs) / 2;  // Punto medio
+                
+                // Calcular error absoluto y relativo
+                let ea = null;
+                if (xaPrev !== null && xa !== 0) {
+                    ea = Math.abs((xa - xaPrev) / xa) * 100;
+                }
+
+                let et = Math.abs((xa - raizReal) / raizReal) * 100;
+
+                // Guardar los resultados de la iteración
+                tabla.push([i, xi, xs, xa, ea, et]);
+
+                // Almacenar los puntos para graficar
+                puntos.push({x: xa, y: f(xa)});
+
+                // Actualizar los valores de xi y xs
+                if (f(xi) * f(xa) < 0) {
+                    xs = xa;
+                } else {
+                    xi = xa;
+                }
+
+                xaPrev = xa;
+                i++;
+            }
+
+            return {tabla, puntos};
+        }
+
+        // Intervalo inicial [xi, xs]
+        let xi = -2;
+        let xs = 1;
+        let raizReal = 5; // Aproximación de la raíz real
+
+        // Ejecutar el método de bisección
+        let resultado = biseccion(xi, xs, 0.0001, raizReal, 10);
+
+        // Mostrar la tabla de resultados
+        let tablaResultados = document.getElementById("tablaResultados").getElementsByTagName("tbody")[0];
+        resultado.tabla.forEach((fila) => {
+            let row = tablaResultados.insertRow();
+            // Iteración (entero)
+            let iteracionCell = row.insertCell(0);
+            iteracionCell.textContent = fila[0];
+
+            // xi y xs con 3 decimales
+            let xiCell = row.insertCell(1);
+            xiCell.textContent = fila[1].toFixed(3);
+
+            let xsCell = row.insertCell(2);
+            xsCell.textContent = fila[2].toFixed(3);
+
+            // xa con 3 decimales
+            let xaCell = row.insertCell(3);
+            xaCell.textContent = fila[3].toFixed(3);
+
+            // ea% (con 2 decimales) y et% (con 2 decimales)
+            let eaCell = row.insertCell(4);
+            eaCell.textContent = fila[4] !== null ? fila[4].toFixed(2) + "%" : "-";
+
+            let etCell = row.insertCell(5);
+            etCell.textContent = fila[5].toFixed(2) + "%";
+        });
+
+        // Mostrar la última raíz aproximada
+        let raizAproximada = resultado.tabla[resultado.tabla.length - 1][3];
+        console.log(`Raíz aproximada: ${raizAproximada.toFixed(5)}`);
+
+        // Preparar los datos para la gráfica
+        let x_vals = [];
+        let y_vals = [];
+        for (let x = -3; x <= 3; x += 0.1) {
+            x_vals.push(x);
+            y_vals.push(f(x));
+        }
+
+        // Crear la gráfica con Chart.js
+        var ctx = document.getElementById('grafica').getContext('2d');
+        var grafica = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: x_vals,
+                datasets: [{
+                    label: 'f(x) = -0.5x^2 + 2.5x + 4.5',
+                    data: y_vals,
+                    borderColor: 'blue',
+                    fill: false,
+                }, {
+                    label: 'Raíz Aproximada',
+                    data: resultado.puntos,
+                    borderColor: 'red',
+                    pointBackgroundColor: 'red',
+                    showLine: false,
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom'
+                    },
+                    y: {
+                        min: -5,
+                        max: 10
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+

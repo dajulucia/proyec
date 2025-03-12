@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Método de Euler</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h2>Método de Euler para y' = 2 cos(x) y</h2>
+    <canvas id="myChart"></canvas>
+    <table border="1">
+        <tr>
+            <th>i</th><th>x</th><th>y_a</th><th>y_e</th><th>ET</th><th>EX</th>
+        </tr>
+        <tbody id="table-body"></tbody>
+    </table>
+
+    <script>
+        function exactSolution(x) {
+            return Math.exp(2 * Math.sin(x));
+        }
+        
+        function eulerMethod(h, x0, y0, xMax) {
+            let x = x0;
+            let y_a = y0;
+            let i = 0;
+            let data = [];
+            let labels = [];
+            let y_exact_values = [];
+
+            while (x <= xMax) {
+                let y_e = exactSolution(x);
+                let et = Math.abs(y_e - y_a); 
+                let ex = et / y_e * 100;
+                
+                document.getElementById("table-body").innerHTML += `<tr>
+                    <td>${i}</td><td>${x.toFixed(2)}</td><td>${y_a.toFixed(6)}</td>
+                    <td>${y_e.toFixed(6)}</td><td>${et.toFixed(6)}</td><td>${ex.toFixed(2)}%</td>
+                </tr>`;
+                
+                labels.push(x.toFixed(2));
+                data.push(y_a);
+                y_exact_values.push(y_e);
+                
+                y_a += h * (2 * Math.cos(x) * y_a);
+                x += h;
+                i++;
+            }
+            return { labels, data, y_exact_values };
+        }
+        
+        let h = 0.25, x0 = 0, y0 = 1, xMax = 2;
+        let result = eulerMethod(h, x0, y0, xMax);
+        
+        new Chart(document.getElementById("myChart"), {
+            type: "line",
+            data: {
+                labels: result.labels,
+                datasets: [
+                    {
+                        label: "Aproximación Euler",
+                        data: result.data,
+                        borderColor: "red",
+                        fill: false
+                    },
+                    {
+                        label: "Solución Exacta",
+                        data: result.y_exact_values,
+                        borderColor: "blue",
+                        fill: false
+                    }
+                ]
+            }
+        });
+    </script>
+</body>
+</html>

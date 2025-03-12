@@ -1,0 +1,20 @@
+{
+  "name": "descar",
+  "version": "1.0.0",
+  "description": "base de datos",
+  "main": "index.js",
+  "scripts": {
+    "test": "mongoose nodemon express cors"
+  },
+  "author": "luciaD",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "mongoose": "^8.12.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
+                                              
