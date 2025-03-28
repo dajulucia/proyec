@@ -1,72 +1,72 @@
-//async function createProducto(req,res) {
-   /*  res.status(200).send({msg:"crear productos"})
-
-
-const producto = require('../modelos/producto'); */
-/* 
-api.post("/createproducto", productosController.createProducto);
-api.post("/getproducto", productosController.getProducto);
-api.post("/updateproducto", productosController.updateroducto);
-
-module.exports={
-    createProducto
-} */
-
-    const Producto = require('../modelos/producto');
-
-async function createProducto(req, res) {
-    const producto = new pr(req.body);
-    // console.log(producto);
-
-    if(req.files.image){
-        const imagenPath=image.getFile(req.files.image);
-        producto.image=imagenPath
+    const Producto = require('../models/producto.models');
+    const imagen = require("../utils/imagen");
+    const fs = require('fs');
+    const path = require('path');
+    
+    async function createProducto(req, res) {
+        const productos = new Producto(req.body);
+        //  console.log(producto);
+    
+        try {
+            if (req.files.imagep) {
+                const imagePath = imagen.getFilePath(req.files.imagep);
+                productos.imagep = imagePath;
+            }
+            const datos = await productos.save();
+            res.status(200).send(datos);
+        } catch (error) {
+            //console.log(error);
+    
+            res.status(500).send({ msg: "Error al guardar los datos" });
+        }
+    
     }
-
-    try {
-        const datos = await producto.save();
-        res.status(200).send(datos);
-    } catch (error) {
-        res.status(500).send({ msg: "Error al guardar los datos" });
+    
+    async function getProducto(req, res) {
+        try {
+            const buscarProducto = await Producto.find();
+            res.status(200).send(buscarProducto);
+        } catch (error) {
+            res.status(500).send({ msg: "Error al buscar los datos" });
+        }
+    
     }
-}
-
-async function getProducto(req, res) {
-    try {
-        const buscarProducto = await Producto.find();
-        res.status(200).send(buscarProducto);
-    } catch (error) {
-        res.status(500).send({ msg: "Error al buscar los datos" });
+    
+    async function delProducto(req, res) {
+        const { id } = req.params;
+        try {
+            const producto = await Producto.findById(id);
+            if (producto && producto.imagep) {
+                const imagePath = path.join(__dirname, '..', producto.imagep);
+                try {
+                    await fs.promises.unlink(imagePath);
+                } catch (err) {
+                    console.error('Error al eliminar la imagen:', err);
+                    return res.status(500).send({ msg: "Error al eliminar la imagen" });
+                }
+            }
+            await Producto.findByIdAndDelete(id);
+            res.status(200).send({ msg: "Producto eliminado correctamente" });
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({ msg: "No se ha podido eliminar la informacion" });
+        }
     }
-}
-
-async function delProducto(req, res) {
-    res.status(200).send({ msg: "Eliminar producto" });
-}
-
-async function updateProducto(req, res) {
-    res.status(200).send({ msg: "Actualizar productos" });
-}
-
-async function updateProducto(req, res) {
-   const {id}=req.params;
-   const updateProducto=req.body;
-
-   try{
-    const update=await producto.findByIAndUpdate8({_id:id},updateproducto);
-
-   }catch (error){
-    res.status(400).send({msg:"Error al actualizar"})
-   }
-}
-
-
-
-module.exports = {
-    createProducto,
-    getProducto,
-    delProducto,
-    updateProducto
-}
-
-     
+    
+    async function updateProducto(req, res) {
+        const { id } = req.params;
+        const updateproducto = req.body;
+        try {
+            await Producto.findByIdAndupdate({ _id: id }, updateproducto);
+            res.status(200).send({ msg: "Dato actualizados correctamente" });
+        } catch (error) {
+            res.status(400).send({ msg: "Error al actualizar" });
+        }
+    }
+    
+    module.exports = {
+        createProducto,
+        getProducto,
+        delProducto,
+        updateProducto
+    }

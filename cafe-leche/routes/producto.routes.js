@@ -11,17 +11,17 @@ api.put("/updateProducto/:id", productosController.updateProductos);
 api.delet("/delproducto", productosController.delProductos);
 
  */
-const express = require("express");
-const multer = require("multer");  // Asegúrate de instalar multer con 'npm install multer'
-const productosController = require("../controllers/producto.controllers");
+const express=require("express");
+const multiparty=require("connect-multiparty");
 
-const upload = multer(); // Configura multer si es necesario
+const productosController=require("../controllers/producto.controllers");
 
-const api = express.Router();
+const md_mparty=multiparty();
+const api=express.Router();
 
-api.post("/createProducto", upload.single('image'), productosController.createProducto);
-api.get("/getProducto", productosController.getProducto);
-api.put("/updateProducto/:id", productosController.updateProducto);
-api.delete("/delProducto/:id", productosController.delProducto);
+api.post("/createproduct",[md_mparty], productosController.createProducto);
+api.get("/getproducto", productosController.getProducto);
+api.patch("/updateproducto/:id",[md_mparty],productosController.updateProducto);
+api.delete('/delproducto/:id', productosController.delProducto);
 
-module.exports = api;
+module.exports=api;
